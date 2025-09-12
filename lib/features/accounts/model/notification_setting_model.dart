@@ -1,11 +1,24 @@
 class NotificationSettingModel {
   final String title;
   final String subtitle;
-  bool isEnabled;
+  final bool isEnabled;
 
   NotificationSettingModel({
     required this.title,
     required this.subtitle,
-    this.isEnabled = false,
+    required this.isEnabled,
   });
+
+  // 🔹 copyWith method
+  NotificationSettingModel copyWith({
+    String? title,
+    String? subtitle,
+    bool? isEnabled,
+  }) {
+    return NotificationSettingModel(
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      isEnabled: isEnabled ?? this.isEnabled,
+    );
+  }
 }

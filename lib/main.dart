@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/theme/app_theme.dart';
+import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/SignInRoleScreen.dart';
 
 import 'package:get/get.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: LoginRoleScreen(),
+      home: SignInRoleScreen(),
     );
   }
 }

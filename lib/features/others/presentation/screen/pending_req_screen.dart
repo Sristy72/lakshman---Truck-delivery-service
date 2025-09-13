@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/dummy_data.dart';
 import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_appbar.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_drawer.dart';
 import 'package:flutter_lakshman1020/features/others/presentation/widgets/pending_request_filter.dart';
 import 'package:flutter_lakshman1020/features/others/presentation/widgets/pending_request_item.dart';
 
@@ -18,14 +19,18 @@ class PendingReqScreen extends StatelessWidget {
           children: [
             PendingRequestFilter(),
             SizedBox(height: 16),
-            Column(
-              children: shipments.map((shipment) {
-                return PendingRequestItem(shipment: shipment);
-              }).toList(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: shipments.length,
+                itemBuilder: (context, index) {
+                  return PendingRequestItem(shipment: shipments[index]);
+                },
+              ),
             ),
           ],
         ),
       ),
+      drawer: CompanyDrawer(),
     );
   }
 }

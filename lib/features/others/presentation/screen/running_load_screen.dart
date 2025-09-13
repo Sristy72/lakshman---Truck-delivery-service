@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/dummy_data.dart';
 import 'package:flutter_lakshman1020/features/home/presentations/widgets/user_home_widgets/shipment_item.dart';
 import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_appbar.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_drawer.dart';
 
 class RunningLoadScreen extends StatelessWidget {
   const RunningLoadScreen({super.key});
@@ -41,6 +42,7 @@ class RunningLoadScreen extends StatelessWidget {
           ],
         ),
       ),
+      drawer: CompanyDrawer(),
     );
   }
 }

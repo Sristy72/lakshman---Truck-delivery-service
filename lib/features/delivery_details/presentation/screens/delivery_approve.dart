@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_appbar.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
+import 'package:flutter_lakshman1020/features/delivery_details/presentation/screens/delivery_payment_screen.dart';
 import 'package:get/get.dart';
 import '../../controllers/delivery_details_controller.dart';
 import '../widgets/delivery_info_card.dart' show DeliveryInfoCard;
@@ -83,7 +84,9 @@ class DeliveryDetailsApprovalScreen extends StatelessWidget {
                           const SizedBox(width: 16), // spacing between buttons
                           Expanded(
                             child: context.primaryButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.to(DeliveryDetailsPaymentScreen());
+                              },
                               text: 'Accept',
                             ),
                           ),

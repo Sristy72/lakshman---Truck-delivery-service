@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_appbar.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_drawer.dart';
 import '../../models/dispatcher_model.dart';
 import '../controllers/dispatcher_controller.dart';
 import '../widgets/dispatcheer_item.dart';
@@ -50,14 +52,7 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.menu, color: Color(0xff18191A), weight: 15),
-        ),
-        title: Text("Spark delivery"),
-        centerTitle: true,
-      ),
+      appBar: CompanyAppbar(),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Column(
@@ -164,6 +159,7 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
           ),
         ],
       ),
+      drawer: CompanyDrawer(),
     );
   }
 }

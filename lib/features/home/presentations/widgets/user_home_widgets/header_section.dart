@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/constants/app_images.dart';
+import 'package:flutter_lakshman1020/features/accounts/presentation/screens/accounts_screen.dart';
 import 'package:flutter_lakshman1020/features/notification/presentations/screens/notification_alert.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -14,9 +15,12 @@ class HeaderSection extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: AssetImage(AppImages.accountUser),
+          GestureDetector(
+            onTap: ()=>Get.to(AccountsScreen()),
+            child: CircleAvatar(
+              radius: 24,
+              backgroundImage: AssetImage(AppImages.accountUser),
+            ),
           ),
           const SizedBox(width: 8),
           Container(

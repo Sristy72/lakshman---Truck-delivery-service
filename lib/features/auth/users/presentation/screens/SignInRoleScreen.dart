@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
+import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/LogIn_screen.dart';
 import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/sign_up_screen.dart';
 import 'package:flutter_lakshman1020/features/auth/users/presentation/widgets/role_button.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/screen/dashboard_overview_scren.dart';
 import 'package:get/get.dart';
 
 class SignInRoleScreen extends StatefulWidget {
@@ -68,7 +70,7 @@ class _SignInRoleScreenState extends State<SignInRoleScreen> {
                 isUser: true,
                 onTap: () {
                   setState(() => selectedRole = "User");
-                  Get.to(() => const SignupScreen());
+                  Get.to(() => const LoginRoleScreen());
                 },
               ),
               RoleButton(
@@ -76,7 +78,7 @@ class _SignInRoleScreenState extends State<SignInRoleScreen> {
                 isSelected: selectedRole == "Company",
                 isUser: false,
                 onTap: () {
-                  setState(() => selectedRole = "Company");
+                  Get.to(DashboardScreen());
                 },
               ),
               const SizedBox(height: 110),

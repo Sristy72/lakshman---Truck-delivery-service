@@ -3,6 +3,8 @@ import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_appbar.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
+import 'package:flutter_lakshman1020/features/delivery_details/presentation/screens/delivery_details_screen.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/constants/app_icons.dart';
 import '../../models/app_text_styles.dart';
@@ -120,7 +122,9 @@ class RequestInformationScreen extends StatelessWidget {
               // Submit Button
               context.primaryButton(
                 text: "Request for a Truck",
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(DeliveryDetailsScreen());
+                },
               ),
             ],
           ),

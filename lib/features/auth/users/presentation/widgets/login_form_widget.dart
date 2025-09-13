@@ -96,6 +96,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/Login_text_field.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
+import 'package:get/get.dart';
+
+import '../../../../home/presentations/screens/user_home_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -163,6 +166,7 @@ class _LoginFormState extends State<LoginForm> {
           onPressed: () {
             debugPrint("Email: ${_emailController.text}");
             debugPrint("Password: ${_passwordController.text}");
+            Get.to(UserHomeScreen());
           },
         ),
       ],

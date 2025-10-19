@@ -42,7 +42,6 @@ class RunningLoadScreen extends StatelessWidget {
           ],
         ),
       ),
-      drawer: CompanyDrawer(),
     );
   }
 }

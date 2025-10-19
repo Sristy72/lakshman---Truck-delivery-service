@@ -13,7 +13,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.iconColor = TColors.grey,
     this.titleCenter = false,
     this.buttonTitle,
-    this.onActionPressed, this.doneButtonTitle,
+    this.onActionPressed,
+    this.doneButtonTitle,
+    this.doneButton,
   });
 
   final String title;
@@ -21,6 +23,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? doneButtonTitle;
   final VoidCallback? onBack;
   final VoidCallback? onActionPressed;
+  final VoidCallback? doneButton; //  callback for "Done" pressed
   final Color titleColor;
   final double titleSize;
   final FontWeight titleWeight;
@@ -32,61 +35,60 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: TColors.white,
       centerTitle: titleCenter,
-      leading: IconButton(
-        onPressed: onBack,
-        icon: Icon(Icons.arrow_back_ios, color: iconColor, size: 16),
-      ),
 
-      // only show trailing button if buttonTitle != null
+      // ✅ show either buttonTitle or doneButtonTitle
       actions: buttonTitle != null
           ? [
-              TextButton(
-                onPressed: onActionPressed,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: TColors.white,
-                    border: Border.all(
-                      color: TColors.personalBackground,
-                      width: 1, // Border thickness
-                    ),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 8,
-                  ),
-                  child: Text(
-                    buttonTitle!,
-                    style: const TextStyle(
-                      color: TColors.grey1,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
+        TextButton(
+          onPressed: onActionPressed,
+          child: Container(
+            decoration: BoxDecoration(
+              color: TColors.white,
+              border: Border.all(
+                color: TColors.personalBackground,
+                width: 1,
               ),
-            ]
+              borderRadius: BorderRadius.circular(4),
+            ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 8,
+            ),
+            child: Text(
+              buttonTitle!,
+              style: const TextStyle(
+                color: TColors.grey1,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+        ),
+      ]
           : (doneButtonTitle != null
-                ? [
-                    TextButton(
-                      onPressed: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: TColors.primary,
-                          border: Border.all(
-                            color: TColors.personalBackground,
-                            width: 1, // Border thickness
-                          ),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          child: CustomText(doneButtonTitle!, style: TextStyle(color: TColors.account),),
-                        ),
-                      ),
-                    ),
-                  ]
-                : null),
+          ? [
+        TextButton(
+          onPressed: doneButton, // use callback here
+          child: Container(
+            decoration: BoxDecoration(
+              color: TColors.primary,
+              border: Border.all(
+                color: TColors.personalBackground,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              child: CustomText(
+                doneButtonTitle!,
+                style: const TextStyle(color: TColors.account),
+              ),
+            ),
+          ),
+        ),
+      ]
+          : null),
 
       title: Text(
         title,
@@ -100,7 +102,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1.0),
         child: Container(
-          color: Colors.grey.shade300, // divider color
+          color: Colors.grey.shade300,
           height: 1.0,
         ),
       ),

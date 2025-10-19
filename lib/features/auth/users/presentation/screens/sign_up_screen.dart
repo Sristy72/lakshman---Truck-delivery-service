@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
+import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/LogIn_screen.dart';
 
 import 'package:flutter_lakshman1020/features/auth/users/presentation/widgets/signup_form_widget.dart';
+import 'package:get/get.dart';
+
+import '../../../../home/presentations/screens/user_home_screen.dart';
 
 class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
+  final String? selectedRole;
+  const SignupScreen({super.key,  this.selectedRole});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,9 @@ class SignupScreen extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => LoginRoleScreen());
+                    },
                     child: const Text(
                       "Skip",
                       style: TextStyle(
@@ -54,7 +60,20 @@ class SignupScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               /// SIGNUP FORM
-              SignupForm(onSignup: () {}, onSignin: () {}),
+              // SignupForm(onSignup: () {
+              //   Get.to(() => UserHomeScreen());
+              // }, onSignin: () {
+              //   Get.to(() => LoginRoleScreen());
+              // }),
+               SignupForm(
+                role: selectedRole?? "", // 👈 Pass the selected role here
+                onSignup: () {
+                  Get.to(() => UserHomeScreen());
+                },
+                onSignin: () {
+                  Get.to(() => LoginRoleScreen());
+                },
+              ),
             ],
           ),
         ),

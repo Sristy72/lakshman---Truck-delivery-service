@@ -27,7 +27,7 @@ class ResetPasswordInfoScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1), // put your color here
+              color: TColors.white1, // put your color here
               borderRadius: BorderRadius.circular(
                 5,
               ), // adjust your corner radius

@@ -11,7 +11,7 @@ class RunningLoadScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CompanyAppbar(),
-
+      drawer: CompanyDrawer(),
       body: Container(
         padding: EdgeInsets.all(20),
         child: Column(

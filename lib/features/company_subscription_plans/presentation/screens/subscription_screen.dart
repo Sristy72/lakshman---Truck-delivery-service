@@ -3,7 +3,7 @@ import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_appbar.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
 import '../../models/subscription_model.dart';
-import '../controllers /subscription_controller.dart';
+import '../controllers/subscription_controller.dart';
 import '../widgets/feature_items.dart';
 
 class SubscriptionScreen extends StatelessWidget {

@@ -4,12 +4,16 @@ import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/constants/custom_text_field.dart';
 import 'package:flutter_lakshman1020/core/constants/signup_text_field.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
+import 'package:get/get.dart';
+
+import '../controller/auth_controller.dart';
 
 class SignupForm extends StatefulWidget {
+  final String role;
   final VoidCallback onSignup;
   final VoidCallback onSignin;
 
-  const SignupForm({super.key, required this.onSignup, required this.onSignin});
+  const SignupForm({super.key, required this.onSignup, required this.onSignin, required this.role});
 
   @override
   State<SignupForm> createState() => _SignupFormState();
@@ -24,7 +28,16 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+      final AuthController authController = Get.find<AuthController>();
+
   bool rememberMe = false;
+  void _submit() {
+    // if (!_formKey.currentState!.validate()) return;
+    authController.register(nameController.text, emailController.text, passwordController.text, confirmPasswordController.text, widget.role );
+
+    
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +242,9 @@ class _SignupFormState extends State<SignupForm> {
             backgroundColor: TColors.primary,
             textColor: TColors.account,
             borderRadius: 8.0,
-            onPressed: () {},
+            onPressed: () {
+              _submit();
+            },
           ),
 
           const SizedBox(height: 32),

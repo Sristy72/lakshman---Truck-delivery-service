@@ -65,7 +65,7 @@ class ActivatedScreen extends StatelessWidget {
                 //Primary Button
                 context.primaryButton(
                   text: "Get Started",
-                  onPressed: () => Get.to(SignUpScreen()),
+                  onPressed: () => Get.to(SignUpCompanyScreen()),
                   height: 48,
                   borderRadius: 12,
                 ),

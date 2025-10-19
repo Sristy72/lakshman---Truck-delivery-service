@@ -10,8 +10,8 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../../../core/constants/appTexts.dart';
 import '../../../home/models/app_text_styles.dart';
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+class SignUpCompanyScreen extends StatelessWidget {
+  const SignUpCompanyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

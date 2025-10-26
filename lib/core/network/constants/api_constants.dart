@@ -2,7 +2,7 @@ class ApiConstants {
   /// [Base Configuration]
   // static const String baseDomain = 'https://karlfive223-backend.onrender.com';
 
-  static const String baseDomain = 'http://10.10.5.88:8001';
+  static const String baseDomain = 'http://10.10.5.59:8001';
   static const String baseUrl = '$baseDomain/api/v1';
 
   /// Optional Google Maps API key. Leave empty to use simulated addresses.

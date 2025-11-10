@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/constants/app_images.dart';
+import 'package:flutter_lakshman1020/features/delivery_details/presentation/screens/driver_delivery_details_screen.dart';
 import 'package:flutter_lakshman1020/features/home/presentations/widgets/driver_home_widgets/load_stop.dart';
+import 'package:get/get.dart';
 
 class CurrentLoadSection extends StatelessWidget {
   const CurrentLoadSection({super.key});
@@ -118,7 +120,13 @@ class _LoadCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    // Navigate to driver delivery details screen with load ID
+                    Get.to(
+                      () => DriverDeliveryDetailsScreen(),
+                      arguments: 'L-1200', // Pass load ID as argument
+                    );
+                  },
                   child: const Text(
                     "View Details",
                     style: TextStyle(color: TColors.primary),

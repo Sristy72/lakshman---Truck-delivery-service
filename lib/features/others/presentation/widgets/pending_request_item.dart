@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/features/home/models/shipment_model.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/screen/assign_price_screen.dart';
+import 'package:get/get.dart';
 
 class PendingRequestItem extends StatelessWidget {
   final Shipment shipment;
@@ -18,6 +20,9 @@ class PendingRequestItem extends StatelessWidget {
         side: BorderSide(color: TColors.personalBackground, width: 2.0),
       ),
       child: ListTile(
+        onTap: () {
+          Get.to(() => AssignPriceScreen(shipment: shipment, loadId: "69019686c174eac51683ee65"));
+        },//ToDO needs loadId parameter
         leading: SizedBox(
           width: 32,
           height: 32,

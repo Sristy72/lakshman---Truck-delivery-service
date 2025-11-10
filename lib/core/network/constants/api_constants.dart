@@ -2,14 +2,13 @@ class ApiConstants {
   /// [Base Configuration]
   // static const String baseDomain = 'https://karlfive223-backend.onrender.com';
 
-  static const String baseDomain = 'http://10.10.5.33:8001';
+  static const String baseDomain = 'http://10.10.5.33:8001';//eshita
   static const String baseUrl = '$baseDomain/api/v1';
 
-  /// soykot ip
+  /// Optional Google Maps API key. Leave empty to use simulated addresses.
+  /// Add your API key here when you want real geocoding.
+  static const String googleMapsApiKey = '';
 
-  static const String soyDomain = 'http://10.10.5.91:5002';
-
-  /// [Headers]
   static Map<String, String> get defaultHeaders => {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -33,9 +32,13 @@ class ApiConstants {
 
   static TeamEndpointcs get team => TeamEndpointcs();
   static LeagueEndpoints get league => LeagueEndpoints();
+  static LoadEndpoints get load => LoadEndpoints();
 
   static GetProfile get getProfile => GetProfile();
-
+  
+  static PlanEndpoints get plan => PlanEndpoints();
+  
+  static PaymentEndpoints get payment => PaymentEndpoints();
 }
 
 /// [Authentication Endpoints]
@@ -56,10 +59,23 @@ class AuthEndpoints {
   final String changePass = '$_base/change-password';
 }
 
-class GetProfile{
-  static const String _base = '${ApiConstants.baseUrl}/user';
-  final String fetchProfile = '$_base/profile';
-  final String updateProfile = '$_base/update-profile';
+class GetProfile {
+  static const String _baseUrl = '${ApiConstants.baseUrl}';
+  
+  // Single endpoint for all roles - backend handles role-based logic
+  String fetchProfileByRole(String role) {
+    return '$_baseUrl/user/profile';
+  }
+  
+  
+  String updateProfileByRole(String role) {
+    return '$_baseUrl/user/update-profile';
+  }
+  
+  
+  // Legacy endpoints for backward compatibility
+  final String fetchProfile = '$_baseUrl/user/profile';
+  final String updateProfile = '$_baseUrl/user/update-profile';
 }
 
 class UserEndpoints {
@@ -86,4 +102,32 @@ class LeagueEndpoints {
   static const String _base = '${ApiConstants.baseUrl}/league';
 
   final String getAllLeagues = '$_base/all-league';
+}
+
+class LoadEndpoints {
+  static const String _base = '${ApiConstants.baseUrl}/load';
+
+  final String getLoads = _base;
+  String getById(String id) => '$_base/$id';
+  String priceAction(String id) => '$_base/$id/price-action';
+  String askPrice(String id) => '$_base/$id/ask-price';
+}
+
+class PlanEndpoints {
+  static const String _base = '${ApiConstants.baseUrl}/plan';
+
+  final String getPlans = _base;
+}
+
+class PaymentEndpoints {
+  static const String _base = '${ApiConstants.baseUrl}/payment';
+
+  final String createPayment = '$_base/create-payment';
+  final String confirmPayment = '$_base/confirm-payment';
+}
+
+class AskPriceEndpoints{
+  static const String _base = '${ApiConstants.baseUrl}/load';
+
+  String askPrice(String id) => '$_base/$id/ask-price';
 }

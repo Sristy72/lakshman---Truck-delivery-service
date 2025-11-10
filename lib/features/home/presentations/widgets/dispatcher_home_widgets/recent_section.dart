@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
+import 'package:flutter_lakshman1020/features/home/presentations/screens/pending_request_screen.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/screen/pending_req_screen.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class RecentSection extends StatelessWidget {
   const RecentSection();
@@ -17,7 +21,9 @@ class RecentSection extends StatelessWidget {
             ),
             const Spacer(),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Get.to(()=> PendingReqScreen1());
+              },
               child: const Text(
                 "View all",
                 style: TextStyle(color: TColors.primary),

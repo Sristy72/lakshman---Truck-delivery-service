@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_lakshman1020/core/base/base_controller.dart';
 import 'package:flutter_lakshman1020/core/network/services/auth_storage_service.dart';
 import 'package:flutter_lakshman1020/core/utils/debug_print.dart';
-import 'package:flutter_lakshman1020/features/accounts/presentation/screens/Reset_PassWord_Screen.dart';
+import 'package:flutter_lakshman1020/features/accounts/controller/account_controller.dart';
 import 'package:flutter_lakshman1020/features/auth/users/data/model/forgot_pass_request_model.dart';
 import 'package:flutter_lakshman1020/features/auth/users/data/model/refresh_token_request_model.dart';
 import 'package:flutter_lakshman1020/features/auth/users/data/model/set_password_request_model.dart';
@@ -13,9 +12,10 @@ import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/Lo
 import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/Otp_verify_screen.dart';
 import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/SignInRoleScreen.dart';
 import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/set_new_password_screen.dart';
-import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/sign_up_screen.dart';
-import 'package:flutter_lakshman1020/features/company_subscription_plans/presentation/screens/subscription_screen.dart';
+import 'package:flutter_lakshman1020/features/home/presentations/screens/dispatcher_home_screen.dart';
+import 'package:flutter_lakshman1020/features/home/presentations/screens/driver_home_screen.dart';
 import 'package:flutter_lakshman1020/features/home/presentations/screens/user_home_screen.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/screen/dashboard_overview_scren.dart';
 import 'package:get/get.dart';
 
 import '../../data/model/login_request_model.dart';
@@ -24,9 +24,6 @@ import '../../data/model/register_request_model.dart';
 class AuthController extends BaseController {
   final AuthRepository _authRepository;
   final AuthStorageService _authStorageService;
-
-  // final String selectedRole;
-  bool _isSuccess = false;
 
   AuthController(this._authRepository, this._authStorageService);
 
@@ -58,25 +55,16 @@ class AuthController extends BaseController {
         setLoading(false);
       },
       (success) async {
-        String role = success.data.role;
-
         debugPrint("✅ API Hit Successful!");
         final user = success.data.user;
-        if (user.role == 'user' || user.role == 'company') {
-          await _authStorageService.storeAuthData(
-            accessToken: success.data.accessToken,
-            refreshToken: success.data.refreshToken,
-            userId: success.data.user.id,
-            role: success.data.role,
-          );
-        }
-
-        // await _authStorageService.storeAuthData(
-        //   accessToken: success.data.accessToken,
-        //   refreshToken: success.data.refreshToken,
-        //   userId: success.data.user.id,
-        //   role: success.data.role,
-        // );
+        
+        // Store auth data for all roles
+        await _authStorageService.storeAuthData(
+          accessToken: success.data.accessToken,
+          refreshToken: success.data.refreshToken,
+          userId: success.data.user.id,
+          role: success.data.role,
+        );
 
         // Optional: show success Snackbar
         Get.snackbar(
@@ -90,19 +78,32 @@ class AuthController extends BaseController {
           duration: const Duration(seconds: 2),
         );
 
+        setLoading(false);
+
+        // Reset AccountController to ensure fresh profile fetch
+        if (Get.isRegistered<AccountController>()) {
+          Get.delete<AccountController>();
+        }
+
+        // Navigate based on role from API response
         if (user.role == 'user') {
           Get.offAll(() => UserHomeScreen());
         } else if (user.role == 'company') {
-          Get.offAll(() => SubscriptionScreen());
+          Get.offAll(() => DashboardScreen());
+        } else if (user.role == 'driver') {
+          Get.offAll(() => DriverHomeScreen());
+        } else if (user.role == 'dispatcher') {
+          Get.offAll(() => DispatcherHomeScreen());
+        } else {
+          // Fallback for unknown roles
+          Get.offAll(() => SignInRoleScreen());
         }
 
         setLoading(false);
 
-        // if(role == UserRole.user.value) {
-          Get.to(() => UserHomeScreen());
-        // }
-
-
+        // // if(role == UserRole.user.value) {
+        // Get.to(() => UserHomeScreen());
+        // // }
       },
     );
   }
@@ -371,8 +372,13 @@ class AuthController extends BaseController {
         if (role == "user") {
           Get.offAll(() => UserHomeScreen());
         } else if (role == "company") {
-          Get.offAll(() => SubscriptionScreen());
-        } else {
+          Get.offAll(() => DashboardScreen());
+        } else if (role == "driver") {
+          Get.offAll(() => DriverHomeScreen());
+        }else if (role == "dispatcher") {
+          Get.offAll(() => DispatcherHomeScreen());
+        }
+        else {
           Get.offAll(() => SignInRoleScreen());
         }
       },

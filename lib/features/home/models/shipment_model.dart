@@ -5,7 +5,7 @@ class Shipment {
   final String description;
   final String origin;
   final String destination;
-  final bool? status; // Optional field for future use
+  final String? status; // Optional field for future use
 
   Shipment({
     required this.id,

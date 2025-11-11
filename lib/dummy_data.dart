@@ -8,7 +8,7 @@ final List<Shipment> shipments = [
     description: "Medical equipment for students",
     origin: "Chicago, IL",
     destination: "Indianapolis, IN",
-    status: false,
+    status: "",
   ),
   Shipment(
     id: "load_45983",
@@ -23,7 +23,7 @@ final List<Shipment> shipments = [
     description: "Food supplies",
     origin: "Houston, TX",
     destination: "Miami, FL",
-    status: false,
+    status: "false",
   ),
   Shipment(
     id: "load_45985",
@@ -31,7 +31,7 @@ final List<Shipment> shipments = [
     description: "Construction materials",
     origin: "Seattle, WA",
     destination: "Portland, OR",
-    status: true,
+    status: "true",
   ),
   Shipment(
     id: "load_45986",
@@ -39,7 +39,7 @@ final List<Shipment> shipments = [
     description: "Clothing and textiles",
     origin: "Boston, MA",
     destination: "Atlanta, GA",
-    status: false,
+    status: "false",
   ),
   Shipment(
     id: "load_45982",
@@ -47,7 +47,7 @@ final List<Shipment> shipments = [
     description: "Medical equipment for students",
     origin: "Chicago, IL",
     destination: "Indianapolis, IN",
-    status: false,
+    status: "false",
   ),
   Shipment(
     id: "load_45983",
@@ -62,7 +62,7 @@ final List<Shipment> shipments = [
     description: "Food supplies",
     origin: "Houston, TX",
     destination: "Miami, FL",
-    status: false,
+    status: "false",
   ),
   Shipment(
     id: "load_45985",
@@ -70,7 +70,7 @@ final List<Shipment> shipments = [
     description: "Construction materials",
     origin: "Seattle, WA",
     destination: "Portland, OR",
-    status: true,
+    status: "true",
   ),
   Shipment(
     id: "load_45986",
@@ -78,7 +78,7 @@ final List<Shipment> shipments = [
     description: "Clothing and textiles",
     origin: "Boston, MA",
     destination: "Atlanta, GA",
-    status: false,
+    status: "false",
   ),
   Shipment(
     id: "load_45982",
@@ -86,7 +86,7 @@ final List<Shipment> shipments = [
     description: "Medical equipment for students",
     origin: "Chicago, IL",
     destination: "Indianapolis, IN",
-    status: false,
+    status: "false",
   ),
   Shipment(
     id: "load_45983",

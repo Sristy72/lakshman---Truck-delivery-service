@@ -136,14 +136,15 @@ class _CompanyPendingReqScreenState extends State<CompanyPendingReqScreen> {
                 else
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Column(
+                      child: 
+                      Column(
                         children: loads
                             .map((load) => PendingRequestItem(
                                   shipment: Shipment(
                                     id: "#${load.id.substring(load.id.length > 5 ? load.id.length - 5 : 0)}",
                                     title: load.title,
                                     description: load.description,
-                                    status: load.orderStatus.toLowerCase() == 'accepted',
+                                    status: load.orderStatus,
                                     origin: load.pickupLocation,
                                     destination: load.deliveryLocation,
                                   ),

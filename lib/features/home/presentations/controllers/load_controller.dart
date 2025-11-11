@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lakshman1020/features/home/data/models/get_dispatcher_by_id.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/utils/debug_print.dart';
 import '../../domain/entities/load_entity.dart';
 import '../../domain/repositories/load_repository.dart';
 
@@ -123,6 +125,43 @@ class LoadController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+//     Future<LoadEntity?> getDispatcherById(String id) async {
+//     try {
+//       isLoading.value = true;
+//       errorMessage.value = '';
+//       final result = await repository.getLoadDispatcherById(id);
+//       return result;
+//     } catch (e) {
+//       errorMessage.value = 'Failed to fetch load: $e';
+//       debugPrint('Error in fetchLoadById: $e');
+//       return null;
+//     } finally {
+//       isLoading.value = false;
+//     }
+//   }
+
+//   Future<DispatcherByIdResponseModel?> getDispatcherById(String id) async {
+//     try {
+//       final result = await repository..getLoadDispatcherById(id);
+
+//       return result.fold(
+//         (failure) {
+//           DPrint.log('❌ Failed to fetch session: ${failure.message}');
+//           return null;
+//         },
+//         (success) {
+//           DPrint.log('✅ Session fetched successfully');
+//           return success.data;
+//         },
+//       );
+//     } catch (e) {
+//       DPrint.log('❌ Error fetching session: $e');
+//       return null;
+//     }
+//   }
+// }
 
   /// Create a new load
   Future<LoadEntity?> createLoad(Map<String, dynamic> payload) async {

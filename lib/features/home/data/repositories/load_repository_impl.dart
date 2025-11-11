@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_lakshman1020/features/home/data/models/get_dispatcher_by_id.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/constants/api_constants.dart';
@@ -14,10 +15,7 @@ class LoadRepositoryImpl implements LoadRepository {
   final LoadRemoteDataSource remoteDataSource;
   final ApiClient apiClient;
 
-  LoadRepositoryImpl({
-    required this.remoteDataSource,
-    required this.apiClient,
-  });
+  LoadRepositoryImpl({required this.remoteDataSource, required this.apiClient});
 
   @override
   NetworkResult<List<LoadEntity>> getLoads() async {
@@ -52,6 +50,21 @@ class LoadRepositoryImpl implements LoadRepository {
       },
       (success) {
         return success.data;
+      },
+    );
+  }
+
+  @override
+  NetworkResult<DispatcherByIdResponseModel> getLoadDispatcherById(String id) {
+    return apiClient.get(
+      ApiConstants.load.getById(id),
+      fromJsonT: (json) {
+        if (json == null) {
+          throw Exception("API returned null for getSessionById");
+        }
+        return DispatcherByIdResponseModel.fromJson(
+          json as Map<String, dynamic>,
+        );
       },
     );
   }

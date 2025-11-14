@@ -96,11 +96,13 @@ class NavItemData {
   final IconData? selectedIcon;
   final String? label;
   final VoidCallback? onPressed;
+  // final Widget Function(BuildContext)? route;
 
   NavItemData({
     required this.icon,
     this.selectedIcon,
     this.label,
     this.onPressed,
+    // this.route,
   });
 }

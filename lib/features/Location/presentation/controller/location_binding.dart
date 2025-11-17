@@ -1,16 +1,13 @@
 import 'package:get/get.dart';
-import 'location_controller.dart';
+import '../../../home/domain/entities/load_entity.dart';
+import '../controller/location_controller.dart';
 
 class LocationBinding extends Bindings {
   @override
   void dependencies() {
-    final args = Get.arguments as Map<String, dynamic>?;
-
-    final loadId = args?['loadId'] as String? ?? '#load_45982';
-
+    final load = Get.arguments as LoadEntity;
     Get.put<LocationController>(
-      LocationController(loadId),
-      permanent: false,
+      LocationController(load),
     );
   }
 }

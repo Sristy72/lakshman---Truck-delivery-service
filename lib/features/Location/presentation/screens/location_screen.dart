@@ -1,20 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as gmap;
-import 'package:latlong2/latlong.dart' as latlng;
-
-/// Full-screen location picker:
-/// - Optional initialLocation (latlong2.LatLng)
-/// - User map-e tap korle marker move hobe
-/// - "Confirm location" button press korle LatLng back return korbe
-
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../../home/domain/entities/load_entity.dart';
 
 class LocationScreen extends StatefulWidget {
-  final latlng.LatLng? initialLocation;
+  final LoadEntity load;
 
   const LocationScreen({
     super.key,
-    this.initialLocation,
+    required this.load,
   });
 
   @override
@@ -22,100 +17,139 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  gmap.GoogleMapController? _mapController;
-  gmap.LatLng? _selectedLatLng;
+  GoogleMapController? _mapController;
 
-  // Dhaka default
-  static const gmap.LatLng _defaultLatLng = gmap.LatLng(23.8103, 90.4125);
-  static const double _defaultZoom = 15;
+  LatLng? _pickupLatLng;
+  LatLng? _deliveryLatLng;
+
+  static const LatLng _fallbackCenter = LatLng(23.8103, 90.4125);
+  static const double _defaultZoom = 12;
 
   @override
   void initState() {
     super.initState();
-    // jodi initialLocation pao, oita diye start korbo, na hole Dhaka
-    if (widget.initialLocation != null) {
-      _selectedLatLng = gmap.LatLng(
-        widget.initialLocation!.latitude,
-        widget.initialLocation!.longitude,
-      );
-    } else {
-      _selectedLatLng = _defaultLatLng;
-    }
+    _initFromLoad();
   }
 
-  void _onMapCreated(gmap.GoogleMapController controller) {
+  LatLng? _parseLatLng(String value) {
+    final parts = value.split(',');
+    if (parts.length != 2) return null;
+
+    final lat = double.tryParse(parts[0].trim());
+    final lng = double.tryParse(parts[1].trim());
+    if (lat == null || lng == null) return null;
+
+    return LatLng(lat, lng);
+  }
+
+  void _initFromLoad() {
+    _pickupLatLng = _parseLatLng(widget.load.pickupLocation);
+    _deliveryLatLng = _parseLatLng(widget.load.deliveryLocation);
+  }
+
+  void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-    if (_selectedLatLng != null) {
-      _mapController!.animateCamera(
-        gmap.CameraUpdate.newCameraPosition(
-          gmap.CameraPosition(
-            target: _selectedLatLng!,
-            zoom: _defaultZoom,
-          ),
-        ),
+
+    if (_pickupLatLng != null && _deliveryLatLng != null) {
+      final southWest = LatLng(
+        math.min(_pickupLatLng!.latitude, _deliveryLatLng!.latitude),
+        math.min(_pickupLatLng!.longitude, _deliveryLatLng!.longitude),
+      );
+      final northEast = LatLng(
+        math.max(_pickupLatLng!.latitude, _deliveryLatLng!.latitude),
+        math.max(_pickupLatLng!.longitude, _deliveryLatLng!.longitude),
+      );
+
+      final bounds = LatLngBounds(southwest: southWest, northeast: northEast);
+
+      await _mapController!.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds, 60),
       );
     }
-  }
-
-  void _onTap(gmap.LatLng position) {
-    setState(() {
-      _selectedLatLng = position;
-    });
-  }
-
-  void _onConfirm() {
-    if (_selectedLatLng == null) {
-      Navigator.of(context).pop();
-      return;
-    }
-
-    // google_maps_flutter.LatLng ➜ latlong2.LatLng convert
-    final result = latlng.LatLng(
-      _selectedLatLng!.latitude,
-      _selectedLatLng!.longitude,
-    );
-
-    Navigator.of(context).pop<latlng.LatLng>(result);
   }
 
   @override
   Widget build(BuildContext context) {
-    final target = _selectedLatLng ?? _defaultLatLng;
+    final hasRoute = _pickupLatLng != null && _deliveryLatLng != null;
+
+    final markers = <Marker>{};
+    final polylines = <Polyline>{};
+
+    if (hasRoute) {
+      markers.addAll({
+        Marker(
+          markerId: const MarkerId('pickup'),
+          position: _pickupLatLng!,
+          infoWindow: const InfoWindow(title: 'Pickup'),
+        ),
+        Marker(
+          markerId: const MarkerId('delivery'),
+          position: _deliveryLatLng!,
+          infoWindow: const InfoWindow(title: 'Delivery'),
+        ),
+      });
+
+      polylines.add(
+        Polyline(
+          polylineId: const PolylineId('route'),
+          points: [
+            _pickupLatLng!,
+            _deliveryLatLng!,
+          ],
+          width: 5,
+          color: Colors.blue,
+        ),
+      );
+    }
+
+    final initialTarget = hasRoute ? _pickupLatLng! : _fallbackCenter;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select location'),
-
-      ),
       body: Stack(
         children: [
-          gmap.GoogleMap(
-            initialCameraPosition: gmap.CameraPosition(
-              target: target,
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: initialTarget,
               zoom: _defaultZoom,
             ),
             onMapCreated: _onMapCreated,
-            onTap: _onTap,
-            markers: _selectedLatLng == null
-                ? {}
-                : {
-              gmap.Marker(
-                markerId: const gmap.MarkerId('selected'),
-                position: _selectedLatLng!,
-              ),
-            },
-            myLocationButtonEnabled: true,
+            markers: markers,
+            polylines: polylines,
+            myLocationButtonEnabled: false,
             zoomControlsEnabled: false,
           ),
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 24 + MediaQuery.of(context).padding.bottom,
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _onConfirm,
-                child: const Text('Confirm location'),
+
+          // 👇 top blue pill like mock
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0057FF),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    '#${widget.load.id}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_bottom_nav.dart';
-import 'package:flutter_lakshman1020/features/Location/presentation/screens/location_screen.dart';
 import 'package:flutter_lakshman1020/features/accounts/controller/account_controller.dart';
 import 'package:flutter_lakshman1020/features/accounts/presentation/screens/accounts_screen.dart';
 import 'package:flutter_lakshman1020/features/chat/presentation/screens/chat_inbox_screen.dart';
@@ -9,14 +8,13 @@ import 'package:flutter_lakshman1020/features/home/presentations/widgets/user_ho
 import 'package:flutter_lakshman1020/features/home/presentations/widgets/user_home_widgets/recent_shipment_header.dart';
 import 'package:flutter_lakshman1020/features/home/presentations/widgets/user_home_widgets/shipment_filter_tabs.dart';
 import 'package:flutter_lakshman1020/features/home/presentations/widgets/user_home_widgets/shipment_item.dart';
-import 'package:flutter_lakshman1020/features/notification/presentation/screens/messages_screen.dart';
-
-// Pages used for bottom navigation
-import 'package:flutter_lakshman1020/features/others/presentation/screen/shipment_screen.dart';
 import 'package:get/get.dart';
-
+import '../../../Location/presentation/screens/location_screen.dart';
+import '../../domain/entities/load_entity.dart';
 import '../bindings/load_binding.dart';
 import '../controllers/load_controller.dart';
+
+
 
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen({super.key});
@@ -117,10 +115,52 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       ),
     );
 
+// 🔹 NEW: locationPage widget
+    final Widget locationPage = Obx(() {
+      final loads = loadController.filteredLoads;
+
+      if (loads.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text('No shipments to show on map'),
+          ),
+        );
+      }
+
+      LoadEntity? mappable;
+
+      for (final l in loads) {
+        bool canParse(String value) {
+          final parts = value.split(',');
+          if (parts.length != 2) return false;
+          return double.tryParse(parts[0].trim()) != null &&
+              double.tryParse(parts[1].trim()) != null;
+        }
+
+        if (canParse(l.pickupLocation) && canParse(l.deliveryLocation)) {
+          mappable = l;
+          break;
+        }
+      }
+
+      if (mappable == null) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text('No shipments with valid coordinates'),
+          ),
+        );
+      }
+
+      return LocationScreen(load: mappable!);
+    });
+
+
     final List<Widget> pages = [
       homePage,
-      LocationScreen(),
-      ChatInboxScreen(),
+      locationPage,
+       ChatInboxScreen(),
       const AccountsScreen(),
     ];
 
@@ -133,6 +173,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           setState(() {
             _currentIndex = index;
           });
+
+          if (index == 1) {
+            loadController.fetchLoads();
+          }
         },
         items: [
           NavItemData(
@@ -145,7 +189,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             selectedIcon: Icons.local_shipping,
             label: 'Loads',
           ),
-
           NavItemData(
             icon: Icons.mail_outlined,
             selectedIcon: Icons.mail,

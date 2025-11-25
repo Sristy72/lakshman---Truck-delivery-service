@@ -16,16 +16,14 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 80,
-      decoration: const BoxDecoration(
-        color: Color(0xFFFB2CAFF),
-      ),
+      decoration: const BoxDecoration(color: Color(0xFFFB2CAFF)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(
             items.length,
-                (index) => _buildNavItem(
+            (index) => _buildNavItem(
               index: index,
               item: items[index],
               isSelected: currentIndex == index,
@@ -97,10 +95,13 @@ class NavItemData {
   final String? label;
   final VoidCallback? onPressed;
 
+  // final Widget Function(BuildContext)? route;
+
   NavItemData({
     required this.icon,
     this.selectedIcon,
     this.label,
     this.onPressed,
+    // this.route,
   });
 }

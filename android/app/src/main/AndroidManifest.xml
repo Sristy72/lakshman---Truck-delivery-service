@@ -1,9 +1,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Map tiles er jonno -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Current location / myLocation er jonno -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+
     <application
         android:label="flutter_lakshman1020"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
+
+        <!-- Google Maps API KEY -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyALWWWVRTpQHw1A8okK1Mxx6lCgFRyGRPI" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

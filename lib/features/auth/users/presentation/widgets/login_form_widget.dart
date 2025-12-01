@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/Login_text_field.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
-import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
 import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/forgot_email_screen.dart';
 import 'package:get/get.dart';
 
@@ -73,24 +72,45 @@ class _LoginFormState extends State<LoginForm> {
         ),
         const SizedBox(height: 32),
 
-        // Login button
-        context.primaryButton(
-          text: "Login",
-          width: double.infinity,
-          height: 51,
-          backgroundColor: TColors.primary,
-          textColor: TColors.account,
-          borderRadius: 8.0,
-          onPressed: () {
-            _submit();
-            // authController.login(
-            //   _emailController.text,
-            //   _passwordController.text,
-            // );
-            debugPrint("Email: ${_emailController.text}");
-            debugPrint("Password: ${_passwordController.text}");
-          },
-        ),
+        // Login button with loading indicator
+        Obx(() {
+          final isLoading = authController.isLoading.value;
+          return SizedBox(
+            width: double.infinity,
+            height: 51,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                elevation: 0,
+              ),
+              onPressed: isLoading ? null : () {
+                _submit();
+                debugPrint("Email: ${_emailController.text}");
+                debugPrint("Password: ${_passwordController.text}");
+              },
+              child: isLoading
+                  ? const SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text(
+                      "Login",
+                      style: TextStyle(
+                        color: TColors.account,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+            ),
+          );
+        }),
       ],
     );
   }

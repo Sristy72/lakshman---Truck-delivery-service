@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
-import 'package:flutter_lakshman1020/features/home/presentations/screens/request_information.dart';
+import 'package:flutter_lakshman1020/features/home/presentations/screens/request_for_truck_screen.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 

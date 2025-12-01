@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_appbar.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
 import 'package:get/get.dart';
-import '../../controllers/delivery_details_controller.dart';
+import '../controllers/delivery_details_controller.dart';
 import '../widgets/delivery_info_card.dart' show DeliveryInfoCard;
 import '../widgets/delivery_triple_dot.dart';
 import '../widgets/products_details_card.dart'; // Adjust import path as needed
@@ -23,7 +23,7 @@ class DeliveryDetailsPaymentScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         final selectedDelivery =
-        controller.deliveryList[controller.selectedIndex.value];
+            controller.deliveryList[controller.selectedIndex.value];
         if (selectedDelivery == null) {}
         // Explicitly cast to Map<String, String> to match the expected type
         final deliveryDetails = Map<String, String>.from(selectedDelivery)
@@ -62,7 +62,7 @@ class DeliveryDetailsPaymentScreen extends StatelessWidget {
                     ),
                     ProductDetailsCard(
                       description:
-                      selectedDelivery['productDescription'] ??
+                          selectedDelivery['productDescription'] ??
                           'No description available',
                     ),
                     const SizedBox(height: 32),
@@ -73,7 +73,7 @@ class DeliveryDetailsPaymentScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: context.secondaryButton(
-                              onPressed: (){},
+                              onPressed: () {},
                               btnBG: Color(0xffE5EDFF),
                               text: "Contact Driver",
                               btnTxtColor: Color(0xff5C6066),

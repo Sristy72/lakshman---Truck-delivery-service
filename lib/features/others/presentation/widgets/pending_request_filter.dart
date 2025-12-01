@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
+import 'package:get/get.dart';
+
+import '../../../home/presentations/controllers/load_controller.dart';
 
 class PendingRequestFilter extends StatefulWidget {
   const PendingRequestFilter({super.key});
@@ -9,6 +12,7 @@ class PendingRequestFilter extends StatefulWidget {
 }
 
 class _PendingRequestFilterState extends State<PendingRequestFilter> {
+  final controller = Get.find<LoadController>();
   int selectedIndex = 0;
   final filters = ["All", "Assign price", "Assign driver"];
 
@@ -24,7 +28,10 @@ class _PendingRequestFilterState extends State<PendingRequestFilter> {
               setState(() {
                 selectedIndex = index;
               });
+         
+              controller.filterLoads(filters[index]);
             },
+
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Container(

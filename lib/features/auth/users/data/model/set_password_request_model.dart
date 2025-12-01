@@ -9,7 +9,6 @@ class ResetPasswordRequestModel {
     required this.password,
   });
 
-  // Convert Dart object → JSON
   Map<String, dynamic> toJson() {
     return {
       "email": email,
@@ -18,6 +17,5 @@ class ResetPasswordRequestModel {
     };
   }
 
-  // Optional: Convert JSON → Dart object (if needed)
   
 }

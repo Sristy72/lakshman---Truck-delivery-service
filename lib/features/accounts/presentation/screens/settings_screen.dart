@@ -43,17 +43,17 @@ class SettingsScreen extends StatelessWidget {
                 _buildListTile(AppImages.resetPassIcon, "Reset password", () {
                   Get.to(() => const ResetPasswordScreen());
                 }),
-                Divider(color: TColors.grey2.withOpacity(.4)),
+                Divider(color: TColors.grey2.withValues(alpha: 0.4)),
 
                 _buildListTile(AppImages.notification, "Notification", () {
                   Get.to(() => NotificationSettingsScreen());
                 }),
-                Divider(color: TColors.grey2.withOpacity(.4)),
+                Divider(color: TColors.grey2.withValues(alpha: 0.4)),
 
                 _buildListTile(AppImages.about_us, "About us", () {
                   Get.to(() => const AboutUsScreen());
                 }),
-                Divider(color: TColors.grey2.withOpacity(.4)),
+                Divider(color: TColors.grey2.withValues(alpha: 0.4)),
 
                 const SizedBox(height: 24),
                 Text(
@@ -66,13 +66,13 @@ class SettingsScreen extends StatelessWidget {
                 ),
 
                 _buildSwitchTile(AppImages.callIcon, "Phone calls"),
-                Divider(color: TColors.grey2.withOpacity(.4)),
+                Divider(color: TColors.grey2.withValues(alpha: 0.4)),
 
                 _buildListTile(AppImages.languageIcon, "Language", () {}),
-                Divider(color: TColors.grey2.withOpacity(.4)),
+                Divider(color: TColors.grey2.withValues(alpha: 0.4)),
 
                 _buildListTile(AppImages.currencyIcon, "Currency", () {}),
-                Divider(color: TColors.grey2.withOpacity(.4)),
+                Divider(color: TColors.grey2.withValues(alpha: 0.4)),
 
                 const SizedBox(height: 20),
               ],
@@ -120,7 +120,7 @@ class SettingsScreen extends StatelessWidget {
             onChanged: (value) {
               phoneCallEnabled.value = value;
             },
-            activeColor: TColors.enableButton.withOpacity(1),
+            activeThumbColor: TColors.enableButton.withValues(alpha: 1),
             activeTrackColor: TColors.personalBackground,
             inactiveThumbColor: TColors.enableButton,
           ),

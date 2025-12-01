@@ -1,14 +1,14 @@
 import 'dart:developer' as DPrint;
 import 'dart:io';
 
-
 import 'package:flutter_lakshman1020/features/accounts/data/models/change_password_request_model.dart';
+import 'package:flutter_lakshman1020/features/accounts/data/models/driver_profile_response_model.dart';
 import 'package:flutter_lakshman1020/features/accounts/data/models/fetch_profile_response_model.dart';
 import 'package:flutter_lakshman1020/features/accounts/domain/repo/account_repo.dart';
 import 'package:get/get.dart';
+
 import '../../../../core/base/base_controller.dart';
 import '../../../../core/network/services/multiple_form_data_manager.dart';
-import '../presentation/screens/accounts_screen.dart';
 
 class AccountController extends BaseController {
   final AccountRepository _accountRepository;
@@ -20,6 +20,7 @@ class AccountController extends BaseController {
   AccountController(this._accountRepository);
 
   final Rxn<FetchProfileResponseModel> userInfo = Rxn<FetchProfileResponseModel>();
+  final Rxn<DriverProfileResponseModel> driverProfile = Rxn<DriverProfileResponseModel>();
   @override
   void onInit() {
     super.onInit();
@@ -34,14 +35,17 @@ class AccountController extends BaseController {
 
     final result = await _accountRepository.fetchProfile();
 
-
     result.fold((fail) {
       setError(fail.message);
-      DPrint.log('data fetch failed');
+      DPrint.log('❌ Profile fetch failed: ${fail.message}');
       setLoading(false);
     }, (success) {
       userInfo.value = success.data;
-      DPrint.log(success.message);
+      DPrint.log('✅ Profile fetched successfully');
+      DPrint.log('👤 User Name: ${success.data.name}');
+      DPrint.log('📧 User Email: ${success.data.email}');
+      DPrint.log('🎭 User Role: ${success.data.role}');
+      DPrint.log('🖼️ Avatar URL: ${success.data.avatar.url}');
       setLoading(false);
     });
   }
@@ -59,31 +63,72 @@ class AccountController extends BaseController {
     setLoading(true);
     setError('');
 
-    if (image != null) _multiFormDataManager.addImageFile(image, key: "avatar");
-    _multiFormDataManager.addTextData("name", name);
-    _multiFormDataManager.addTextData("email", mail);
-    _multiFormDataManager.addTextData("phone", mobile);
-    _multiFormDataManager.addTextData("dob", dob);
-    _multiFormDataManager.addTextData("address", address);
-    _multiFormDataManager.addTextData("nationality", nationality);
+    // Clear any previous form data
+    _multiFormDataManager.clear();
+
+    // Get user role to determine which fields to send
+    final userRole = userInfo.value?.role ?? 'user';
+    
+    // Only add fields that have values (non-empty)
+    if (image != null) {
+      _multiFormDataManager.addImageFile(image, key: "avatar");
+    }
+    
+    // For company: only send name, email, and avatar
+    if (userRole.toLowerCase() == 'company') {
+      if (name.isNotEmpty) _multiFormDataManager.addTextData("name", name);
+      if (mail.isNotEmpty) _multiFormDataManager.addTextData("email", mail);
+      DPrint.log('🏢 Updating company profile with: name, email, avatar');
+    } else {
+      // For user/driver/dispatcher: send all available fields
+      if (name.isNotEmpty) _multiFormDataManager.addTextData("name", name);
+      if (mail.isNotEmpty) _multiFormDataManager.addTextData("email", mail);
+      if (mobile.isNotEmpty) _multiFormDataManager.addTextData("phone", mobile);
+      if (dob.isNotEmpty) _multiFormDataManager.addTextData("dob", dob);
+      if (address.isNotEmpty) _multiFormDataManager.addTextData("address", address);
+      if (nationality.isNotEmpty) _multiFormDataManager.addTextData("nationality", nationality);
+      DPrint.log('👤 Updating user profile with all fields');
+    }
 
     final formRequest = await _multiFormDataManager.toFormDataAsync();
+    
+    // Log what we're sending
+    DPrint.log('📤 Sending update with fields: ${_multiFormDataManager.textData.keys.toList()}');
+    DPrint.log('📎 Image attached: ${image != null}');
+    
     final result = await _accountRepository.updatePersonalInfo(formRequest);
 
     result.fold(
           (fail) {
         setError(fail.message);
-        DPrint.log('Personal info update failed: ${fail.message}');
+        DPrint.log('❌ Personal info update failed: ${fail.message}');
         setLoading(false);
+        
+        // Show error snackbar
+        Get.snackbar(
+          'Error',
+          fail.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Get.theme.colorScheme.error,
+          colorText: Get.theme.colorScheme.onError,
+        );
       },
           (success) async {
-        DPrint.log('Personal info updated: ${success.message}');
+        DPrint.log('✅ Personal info updated: ${success.message}');
         await fetchProfile();
 
-        // ✅ Go back one or two screens instead of removing all
-        Get.close(2); // or Get.back(); if only one screen should close
+        // Show success snackbar
+        Get.snackbar(
+          'Success',
+          'Profile updated successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Get.theme.colorScheme.primary,
+          colorText: Get.theme.colorScheme.onPrimary,
+        );
 
-        setError(success.message);
+        // Go back one or two screens instead of removing all
+        Get.close(2);
+
         setLoading(false);
       },
     );
@@ -113,69 +158,4 @@ class AccountController extends BaseController {
       },
     );
   }
-
-  // Future<void> uploadPhoto(File image) async {
-  //   setLoading(true);
-  //   setError('');
-  //
-  //   _multiFormDataManager.addImageFile(image, key: "avatar");
-  //
-  //   final formRequest = await _multiFormDataManager.toFormDataAsync();
-  //
-  //   final result = await _profileRepository.uploadPhoto(formRequest);
-  //
-  //   result.fold(
-  //         (fail) {
-  //       setError(fail.message);
-  //       DPrint.log('Upload photo: ${fail.message}');
-  //       isLoading(false);
-  //     },
-  //         (success) {
-  //       DPrint.log('Upload photo: ${success.message}');
-  //       fetchProfile();
-  //       Get.back();
-  //       setError(success.message);
-  //       _multiFormDataManager.clear();
-  //       isLoading(false);
-  //     },
-  //   );
-  // }
-  //
-  // Future<void> tradingProfileSetup(
-  //     final String tradingExperience,
-  //     final String assetsOfInterest,
-  //     final String mainGoal,
-  //     final String riskAppetite,
-  //     final List<String> preferredLearning,
-  //     ) async {
-  //   setLoading(true);
-  //   setError('');
-  //
-  //   final profile = TradingProfile(tradingExperience: tradingExperience, assetsOfInterest: assetsOfInterest, mainGoal: mainGoal, riskAppetite: riskAppetite, preferredLearning: preferredLearning);
-  //   final toJson = jsonEncode(profile.toJson());
-  //
-  //
-  //   _multiFormDataManager.addTextData("treding_profile", toJson);
-  //
-  //
-  //   final formRequest = await _multiFormDataManager.toFormDataAsync();
-  //
-  //   final result = await _profileRepository.tradingInfo(formRequest);
-  //
-  //   result.fold(
-  //         (fail) {
-  //       setError(fail.message);
-  //       DPrint.log('Trading info: ${fail.message}');
-  //       isLoading(false);
-  //     },
-  //         (success) {
-  //       DPrint.log('Trading info: ${success.message}');
-  //       Get.back();
-  //       isLoading(false);
-  //
-  //       _multiFormDataManager.clear();
-  //       setError(success.message);
-  //     },
-  //   );
-  // }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
-import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/sign_up_screen.dart';
+import 'package:flutter_lakshman1020/features/auth/users/presentation/screens/SignInRoleScreen.dart';
 import 'package:flutter_lakshman1020/features/auth/users/presentation/widgets/login_form_widget.dart';
 import 'package:get/get.dart';
 
@@ -56,10 +56,10 @@ class LoginRoleScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don’t have an account? "),
+                    const Text("Don't have an account? "),
                     GestureDetector(
                       onTap: () {
-                        Get.to(() => SignupScreen());
+                        Get.to(() => const SignInRoleScreen());
                       },
                       child: const Text(
                         "Sign up",

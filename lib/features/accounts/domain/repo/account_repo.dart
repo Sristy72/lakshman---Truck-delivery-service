@@ -8,10 +8,10 @@ import '../../../../core/network/network_result.dart';
 
 
 abstract class AccountRepository {
-  NetworkResult<FetchProfileResponseModel> fetchProfile();
+  NetworkResult<FetchProfileResponseModel> fetchProfile({String? role});
 
   //profile update
-  NetworkResult<UpdateProfileResponseModel> updatePersonalInfo(FormData request);
+  NetworkResult<UpdateProfileResponseModel> updatePersonalInfo(FormData request, {String? role});
   NetworkResult<void> changePassword(ChangePasswordRequestModel request);
 
 // //Change password

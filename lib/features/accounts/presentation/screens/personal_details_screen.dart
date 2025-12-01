@@ -32,8 +32,8 @@ class PersonalDetailsScreen extends StatelessWidget {
           title: 'Personal details',
           titleCenter: true,
           titleColor: TColors.deliveryDetails,
-          buttonTitle: 'Edit',
-            onActionPressed: () {
+          buttonTitle: (user.role == 'user' || user.role == 'company') ? 'Edit' : null,
+            onActionPressed: (user.role == 'user' || user.role == 'company') ? () {
               final user = accountController.userInfo.value!;
               Get.to(
                     () => PersonalEditScreen(
@@ -46,7 +46,7 @@ class PersonalDetailsScreen extends StatelessWidget {
                   avatarUrl: user.avatar.url ?? '',
                 ),
               );
-            },
+            } : null,
         ),
         body: SingleChildScrollView(
           child: SafeArea(

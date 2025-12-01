@@ -13,8 +13,6 @@ class HeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final accountController = Get.find<AccountController>();
 
-    // Fetch profile when header loads (optional if already fetched in onInit)
-    // accountController.fetchProfile();
 
     return GestureDetector(
       onTap: () => Get.to(() => const AccountsScreen()),
@@ -37,31 +35,41 @@ class HeaderSection extends StatelessWidget {
 
             const SizedBox(width: 8),
 
-            // ✅ User Info (name + username)
+            // ✅ User Info (name + username) — use Expanded + overflow handling
             Obx(() {
               final user = accountController.userInfo.value;
               final name = user?.name ?? "Loading...";
               final email = user?.email ?? "";
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Welcome back, $name",
-                    style: const TextStyle(
-                      color: TColors.activityColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+              return Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Welcome back, $name",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style: const TextStyle(
+                        color: TColors.activityColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "@${email.split('@').first}",
-                    style: const TextStyle(
-                      color: TColors.activityColor,
-                      fontSize: 12,
+                    const SizedBox(height: 2),
+                    Text(
+                      "@${email.split('@').first}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                      style: const TextStyle(
+                        color: TColors.activityColor,
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }),
 

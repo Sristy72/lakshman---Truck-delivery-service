@@ -1,66 +1,198 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
-import '../../models/dispatcher_model.dart';
+import 'package:flutter_lakshman1020/core/widgets/skeleton_loader.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_appbar.dart';
+import 'package:flutter_lakshman1020/features/others/presentation/widgets/company_drawer.dart';
+import 'package:get/get.dart';
+
+import '../../../manage_users/presentation/add_dispatcher_screen.dart';
+import '../bindings/dispatcher_binding.dart';
 import '../controllers/dispatcher_controller.dart';
 import '../widgets/dispatcheer_item.dart';
-
 
 class CompanyDispatcherScreen extends StatefulWidget {
   const CompanyDispatcherScreen({super.key});
 
   @override
-  State<CompanyDispatcherScreen> createState() => _CompanyDispatcherScreenState();
+  State<CompanyDispatcherScreen> createState() =>
+      _CompanyDispatcherScreenState();
 }
 
 class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
-  final DispatcherController _dispatcherController = DispatcherController();
-  List<Dispatcher> _dispatchers = [];
-  bool _isLoading = true;
+  late DispatcherController _dispatcherController;
 
   @override
   void initState() {
     super.initState();
-    _loadDispatchers();
+    // Register binding if not already registered
+    if (!Get.isRegistered<DispatcherController>()) {
+      DispatcherBinding().dependencies();
+    }
+    _dispatcherController = Get.find<DispatcherController>();
   }
 
-  Future<void> _loadDispatchers() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final dispatchers = await _dispatcherController.fetchDispatchers();
-      setState(() {
-        _dispatchers = dispatchers;
-        _isLoading = false;
-      });
-    } catch (error) {
-      setState(() {
-        _isLoading = false;
-      });
-      print('Error loading dispatchers: $error');
+  void _removeDispatcher(String dispatcherId) async {
+    // Show confirmation dialog
+    final confirmed = await _showRemoveConfirmationDialog();
+    
+    if (confirmed == true) {
+      // Call API to remove dispatcher
+      await _dispatcherController.removeDispatcher(dispatcherId);
+      
+      // Check if removal was successful by checking if error is empty
+      if (_dispatcherController.errorMessage.isEmpty) {
+        // Show success snackbar
+        Get.snackbar(
+          'Success',
+          'Dispatcher removed successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green.shade900,
+          margin: const EdgeInsets.all(12),
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        // Show error snackbar
+        Get.snackbar(
+          'Error',
+          _dispatcherController.errorMessage.value,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade50,
+          colorText: Colors.red.shade900,
+          margin: const EdgeInsets.all(12),
+          duration: const Duration(seconds: 3),
+        );
+      }
     }
   }
 
-  void _removeDispatcher(int dispatcherId) async {
-    await _dispatcherController.removeDispatcher(dispatcherId);
-    _loadDispatchers(); // Reload the list
+  Future<bool?> _showRemoveConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          backgroundColor: Colors.white,
+          contentPadding: const EdgeInsets.all(24),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Confirm removal\nof dispatcher?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF18191A),
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'This action cannot be undone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF6B7280),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEB5757),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Remove',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return AppScaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.menu, color: Color(0xff18191A), weight: 15),
-        ),
-        title: Text("Spark delivery"),
-        centerTitle: true,
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
+  Widget _buildHomeContent() {
+    return Obx(() {
+      // Loading state
+      if (_dispatcherController.isLoading.value) {
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: 6,
+          itemBuilder: (context, index) => const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: SkeletonListItem(
+              hasLeading: true,
+              hasTrailing: true,
+              lines: 2,
+            ),
+          ),
+        );
+      }
+
+      // Error state
+      if (_dispatcherController.errorMessage.isNotEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(
+                _dispatcherController.errorMessage.value,
+                style: const TextStyle(fontSize: 16, color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => _dispatcherController.fetchDispatchers(),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        );
+      }
+
+      // Empty state
+      if (_dispatcherController.dispatchers.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.people_outline, size: 48, color: Colors.grey),
+              const SizedBox(height: 16),
+              const Text(
+                'No dispatchers found',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Get.to(() => const AddDispatcherScreen()),
+                child: const Text('Add First Dispatcher'),
+              ),
+            ],
+          ),
+        );
+      }
+
+      // Success state with data
+      return Column(
         children: [
           // Header with icon and title
           Padding(
@@ -68,7 +200,7 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(2),
+                  padding: const EdgeInsets.all(2),
                   height: 16,
                   width: 16,
                   child: Image.asset(
@@ -77,9 +209,12 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
+                const Text(
                   "Dispatcher",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ],
             ),
@@ -88,10 +223,10 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
 
           // Table headers
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   flex: 3,
                   child: Text(
                     "Name",
@@ -102,7 +237,7 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
                     ),
                   ),
                 ),
-                Expanded(
+                const Expanded(
                   flex: 3,
                   child: Text(
                     "Mobile",
@@ -117,16 +252,22 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
                   flex: 2,
                   child: GestureDetector(
                     onTap: () {
-                      // Handle add dispatcher functionality
+                      Get.to(() => const AddDispatcherScreen())?.then((_) {
+                        // Refresh list after adding dispatcher
+                        _dispatcherController.fetchDispatchers();
+                      });
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       height: 32,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        color: Color(0xffF5FFF9),
+                        color: const Color(0xffF5FFF9),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Text(
                             "Add",
@@ -136,8 +277,12 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
                               color: Color(0xFF219653),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          Icon(Icons.add, size: 16, color: Color(0xFF219653)),
+                          SizedBox(width: 4),
+                          Icon(
+                            Icons.add,
+                            size: 16,
+                            color: Color(0xFF219653),
+                          ),
                         ],
                       ),
                     ),
@@ -150,10 +295,10 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
           // Dispatcher list
           Expanded(
             child: ListView.separated(
-              itemCount: _dispatchers.length,
-              separatorBuilder: (context, index) => SizedBox(height: 8),
+              itemCount: _dispatcherController.dispatchers.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final dispatcher = _dispatchers[index];
+                final dispatcher = _dispatcherController.dispatchers[index];
                 return DispatcherListItem(
                   name: dispatcher.name,
                   mobile: dispatcher.mobile,
@@ -163,6 +308,18 @@ class _CompanyDispatcherScreenState extends State<CompanyDispatcherScreen> {
             ),
           ),
         ],
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CompanyAppbar(),
+      drawer: CompanyDrawer(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: _buildHomeContent(),
       ),
     );
   }

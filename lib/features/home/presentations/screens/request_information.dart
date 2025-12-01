@@ -3,6 +3,8 @@ import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 import 'package:flutter_lakshman1020/core/widgets/app_scaffold.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_appbar.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
+import 'package:flutter_lakshman1020/features/delivery_details/presentation/screens/delivery_details_screen.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/constants/app_icons.dart';
 import '../../models/app_text_styles.dart';
@@ -49,13 +51,16 @@ class RequestInformationScreen extends StatelessWidget {
               _buildTextField(
                 label: "Description",
                 hint:
-                "Ex: 3 sealed cartons of medical supplies. Fragile and time-sensitive. Handle with care",
+                    "Ex: 3 sealed cartons of medical supplies. Fragile and time-sensitive. Handle with care",
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
 
               // Category
-              _buildDropdown(label: "Category", items: ["Medicine", "Furniture"]),
+              _buildDropdown(
+                label: "Category",
+                items: ["Medicine", "Furniture"],
+              ),
               const SizedBox(height: 16),
 
               // Company
@@ -112,7 +117,7 @@ class RequestInformationScreen extends StatelessWidget {
               _buildTextField(
                 label: "Special note",
                 hint:
-                "This delivery contains fragile and time-sensitive medical supplies. Ensure temperature control if required, avoid…",
+                    "This delivery contains fragile and time-sensitive medical supplies. Ensure temperature control if required, avoid…",
                 maxLines: 3,
               ),
               const SizedBox(height: 20),
@@ -120,7 +125,9 @@ class RequestInformationScreen extends StatelessWidget {
               // Submit Button
               context.primaryButton(
                 text: "Request for a Truck",
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => DeliveryDetailsScreen());
+                },
               ),
             ],
           ),
@@ -147,25 +154,22 @@ class RequestInformationScreen extends StatelessWidget {
             hintStyle: TTextStyles.hint,
             suffixIcon: suffixAsset != null
                 ? Padding(
-              padding: const EdgeInsets.all(12),
-              child: Image.asset(suffixAsset, width: 11, height: 19),
-            )
+                    padding: const EdgeInsets.all(12),
+                    child: Image.asset(suffixAsset, width: 11, height: 19),
+                  )
                 : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 14,
             ),
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDropdown({
-    required String label,
-    required List<String> items,
-  }) {
+  Widget _buildDropdown({required String label, required List<String> items}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -179,8 +183,10 @@ class RequestInformationScreen extends StatelessWidget {
           onChanged: (value) {},
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 14,
+            ),
           ),
         ),
       ],

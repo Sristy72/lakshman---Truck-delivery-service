@@ -2,32 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_colors.dart';
 
 class StatsSection extends StatelessWidget {
-  const StatsSection({super.key});
+  final int pendingRequests;
+  final int readyToLoad;
+  final int availableDrivers;
+
+  const StatsSection({
+    super.key,
+    required this.pendingRequests,
+    required this.readyToLoad,
+    required this.availableDrivers,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
+      children: [
         _StatCard(
           imagePath: "assets/images/pending_request.png",
           title: "Pending Request",
-          value: "24",
+          value: pendingRequests.toString(),
           trend: "+15%",
           trendColor: Colors.green,
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         _StatCard(
           imagePath: "assets/images/ready_to_load.png",
           title: "Ready to Load",
-          value: "19",
+          value: readyToLoad.toString(),
           trend: "+15%",
           trendColor: Colors.green,
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         _StatCard(
           imagePath: "assets/images/available_driver.png",
           title: "Available Driver",
-          value: "12",
+          value: availableDrivers.toString(),
         ),
       ],
     );

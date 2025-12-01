@@ -1,31 +1,41 @@
 class Dispatcher {
-  final int id;
+  final String id;
   final String name;
   final String mobile;
+  final String? email;
   final String? imageUrl;
 
   Dispatcher({
     required this.id,
     required this.name,
     required this.mobile,
+    this.email,
     this.imageUrl,
   });
 
   factory Dispatcher.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] as Map<String, dynamic>?;
+    
     return Dispatcher(
-      id: json['id'],
-      name: json['name'],
-      mobile: json['mobile'],
-      imageUrl: json['imageUrl'],
+      id: json['_id'] ?? '',
+      name: user?['name'] ?? 'Unknown',
+      mobile: user?['phone'] ?? 'N/A',
+      email: user?['email'],
+      imageUrl: user?['avatar']?['url'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-      'mobile': mobile,
-      'imageUrl': imageUrl,
+      '_id': id,
+      'user': {
+        'name': name,
+        'phone': mobile,
+        'email': email,
+        'avatar': {
+          'url': imageUrl,
+        }
+      },
     };
   }
 }

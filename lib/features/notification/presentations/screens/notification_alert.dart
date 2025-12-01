@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/constants/app_icons.dart';
-import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
-import 'package:flutter_lakshman1020/features/accounts/presentation/screens/notification_screen.dart';
-import 'package:flutter_lakshman1020/features/home/presentations/screens/user_home_screen.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_images.dart';
-import '../../../home/models/app_text_styles.dart';
-import 'notification_empty.dart';
-import 'notification_list.dart';
 import '../../../../features/notification/presentations/widgets/notification_alert_widget.dart';
-class NotificationAlertScreen extends StatelessWidget {
+import '../../../home/models/app_text_styles.dart';
+import '../bindings/notification_binding.dart';
+import '../controllers/notification_alert_controller.dart';
+
+class NotificationAlertScreen extends StatefulWidget {
   const NotificationAlertScreen({super.key});
+
+  @override
+  State<NotificationAlertScreen> createState() => _NotificationAlertScreenState();
+}
+
+class _NotificationAlertScreenState extends State<NotificationAlertScreen> {
+  late final NotificationAlertController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize bindings if not already initialized
+    if (!Get.isRegistered<NotificationAlertController>()) {
+      // Initialize notification binding first
+      NotificationBinding().dependencies();
+      // Then put the alert controller
+      Get.put(NotificationAlertController());
+    }
+    _controller = Get.find<NotificationAlertController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +105,7 @@ class NotificationAlertScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                Row(
+                Obx(() => Row(
                   children: [
                     //Later button
                     Expanded(
@@ -101,29 +119,59 @@ class NotificationAlertScreen extends StatelessWidget {
                           padding:
                           const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        onPressed: () =>
-                            Get.to(const NotificationEmptyScreen()),
-                        child: const Text(
-                          "Later",
-                          style: TextStyle(
-                            color: TColors.deliveryDetails,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        onPressed: _controller.isLoading.value 
+                          ? null 
+                          : () => _controller.handleLaterPressed(),
+                        child: _controller.isLoading.value
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text(
+                              "Later",
+                              style: TextStyle(
+                                color: TColors.deliveryDetails,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                       ),
                     ),
                     const SizedBox(width: 12),
 
                     // Get Notified button (primary)
                     Expanded(
-                      child: context.primaryButton(
-                        text: "Get notified",
-                        onPressed: () =>
-                            Get.to( NotificationListScreen()),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onPressed: _controller.isLoading.value 
+                          ? null 
+                          : () => _controller.handleGetNotifiedPressed(),
+                        child: _controller.isLoading.value
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "Get notified",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                       ),
                     ),
                   ],
-                ),
+                )),
                 const SizedBox(height: 20),
               ],
             ),

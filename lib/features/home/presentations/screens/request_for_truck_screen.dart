@@ -10,9 +10,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../../core/constants/app_icons.dart';
 import '../../data/datasources/category_remote_datasource.dart';
-import '../../data/datasources/load_remote_datasource.dart';
 import '../../data/repositories/category_repository_impl.dart';
-import '../../data/repositories/load_repository_impl.dart';
 import '../../models/app_text_styles.dart';
 import '../bindings/company_binding.dart';
 import '../controllers/category_controller.dart';
@@ -354,26 +352,14 @@ class _RequestInformationScreenState extends State<RequestInformationScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers using the binding setup to ensure proper DI
-    if (!Get.isRegistered<LoadController>()) {
-      final remoteDataSource = LoadRemoteDataSourceImpl(apiClient: ApiClient());
-      final repository = LoadRepositoryImpl(
-        remoteDataSource: remoteDataSource,
-        apiClient: ApiClient(),
-      );
-      Get.put(LoadController(repository: repository));
-    }
-
-    // Initialize company controller and binding
+    // LoadController is now registered globally in service locator
+    
+    // Initialize company controller and binding if not already done
     if (!Get.isRegistered<CompanyController>()) {
       CompanyBinding().dependencies();
-      // Fetch companies when controller is initialized
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.find<CompanyController>().fetchCompanies();
-      });
     }
-
-    // Initialize category controller
+    
+    // Initialize category controller if not already done
     if (!Get.isRegistered<CategoryController>()) {
       // Set up dependencies manually for immediate availability
       final apiClient = Get.find<ApiClient>();
@@ -381,12 +367,13 @@ class _RequestInformationScreenState extends State<RequestInformationScreen> {
       final categoryRepository = CategoryRepositoryImpl(remoteDataSource: categoryDataSource);
       final categoryController = CategoryController(repository: categoryRepository);
       Get.put(categoryController, permanent: true);
-      
-      // Fetch categories when controller is initialized
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        categoryController.fetchCategories();
-      });
     }
+    
+    // Always fetch fresh data when screen opens (even if controllers already exist)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.find<CompanyController>().fetchCompanies();
+      Get.find<CategoryController>().fetchCategories();
+    });
   }
 
   @override

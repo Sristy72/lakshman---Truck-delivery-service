@@ -9,27 +9,26 @@ import '../controllers/category_controller.dart';
 class CategoryBinding extends Bindings {
   @override
   void dependencies() {
-    // API Client
-    Get.lazyPut<ApiClient>(
-      () => ApiClient(),
+    // API Client - already registered in setupCore(), so don't re-register it
+
+    // Data source - use fenix: true to recreate if disposed
+    Get.lazyPut<CategoryRemoteDataSource>(
+      () => CategoryRemoteDataSourceImpl(apiClient: Get.find<ApiClient>()),
       fenix: true,
     );
 
-    // Data source
-    Get.lazyPut<CategoryRemoteDataSource>(
-      () => CategoryRemoteDataSourceImpl(apiClient: Get.find<ApiClient>()),
-    );
-
-    // Repository
+    // Repository - use fenix: true to recreate if disposed
     Get.lazyPut<CategoryRepository>(
       () => CategoryRepositoryImpl(
         remoteDataSource: Get.find<CategoryRemoteDataSource>(),
       ),
+      fenix: true,
     );
 
-    // Controller
+    // Controller - use fenix: true to recreate if disposed
     Get.lazyPut<CategoryController>(
       () => CategoryController(repository: Get.find<CategoryRepository>()),
+      fenix: true,
     );
   }
 }

@@ -9,28 +9,27 @@ import '../controllers/load_controller.dart';
 class LoadBinding extends Bindings {
   @override
   void dependencies() {
-    // API Client
-    Get.lazyPut<ApiClient>(
-      () => ApiClient(),
+    // API Client - already registered in setupCore(), so don't re-register it
+    
+    // Data source - use fenix: true to recreate if disposed
+    Get.lazyPut<LoadRemoteDataSource>(
+      () => LoadRemoteDataSourceImpl(apiClient: Get.find<ApiClient>()),
       fenix: true,
     );
 
-    // Data source
-    Get.lazyPut<LoadRemoteDataSource>(
-      () => LoadRemoteDataSourceImpl(apiClient: Get.find<ApiClient>()),
-    );
-
-    // Repository
+    // Repository - use fenix: true to recreate if disposed
     Get.lazyPut<LoadRepository>(
       () => LoadRepositoryImpl(
         remoteDataSource: Get.find<LoadRemoteDataSource>(),
         apiClient: Get.find<ApiClient>(),
       ),
+      fenix: true,
     );
 
-    // Controller
+    // Controller - use fenix: true to recreate if disposed
     Get.lazyPut<LoadController>(
       () => LoadController(repository: Get.find<LoadRepository>()),
+      fenix: true,
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lakshman1020/core/widgets/custom_appbar.dart';
 import 'package:flutter_lakshman1020/core/widgets/primary_button.dart';
 import 'package:get/get.dart';
-import '../../controllers/delivery_details_controller.dart';
+import '../controllers/delivery_details_controller.dart';
 import '../widgets/delivery_info_card.dart' show DeliveryInfoCard;
 import '../widgets/delivery_triple_dot.dart';
 import '../widgets/products_details_card.dart'; // Adjust import path as needed
@@ -73,7 +73,7 @@ class DeliveryDetailsApprovalScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: context.secondaryButton(
-                              onPressed: (){},
+                              onPressed: () {},
                               btnBG: Color(0xffFFF5F5),
                               text: "Reject",
                               btnTxtColor: Color(0xffE94949),

@@ -1,45 +1,65 @@
 class Driver {
-  final int id;
+  final String id;
   final String name;
+  final String phone;
+  final String? email;
+  final String? imageUrl;
+  final String? address;
+  final String? dateOfBirth;
+  final String? nationality;
   final int deliveryCount;
   final double rating;
-  final String imageUrl;
-  final String status; // "available" or "on_load"
 
   Driver({
     required this.id,
     required this.name,
-    required this.deliveryCount,
-    required this.rating,
-    required this.imageUrl,
-    required this.status,
+    required this.phone,
+    this.email,
+    this.imageUrl,
+    this.address,
+    this.dateOfBirth,
+    this.nationality,
+    this.deliveryCount = 0,
+    this.rating = 0.0,
   });
 
   factory Driver.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] as Map<String, dynamic>?;
+    
     return Driver(
-      id: json['id'],
-      name: json['name'],
-      deliveryCount: json['deliveryCount'],
-      rating: json['rating'].toDouble(),
-      imageUrl: json['imageUrl'] ?? "assets/images/truck_home.png",
-      status: json['status'],
+      id: json['_id'] ?? '',
+      name: user?['name'] ?? 'Unknown',
+      phone: user?['phone'] ?? 'N/A',
+      email: user?['email'],
+      imageUrl: user?['avatar']?['url'],
+      address: user?['address'],
+      dateOfBirth: user?['dateOfBirth'],
+      nationality: user?['nationality'],
+      deliveryCount: json['deliveryCount'] ?? 0,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
-  // Method to convert Driver to JSON (for API requests)
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
+      '_id': id,
+      'user': {
+        'name': name,
+        'phone': phone,
+        'email': email,
+        'address': address,
+        'dateOfBirth': dateOfBirth,
+        'nationality': nationality,
+        'avatar': {
+          'url': imageUrl,
+        }
+      },
       'deliveryCount': deliveryCount,
       'rating': rating,
-      'imageUrl': imageUrl,
-      'status': status,
     };
   }
 }
 
-// Helper method to parse list of drivers from API response
 List<Driver> parseDriversFromJson(List<dynamic> jsonList) {
   return jsonList.map((json) => Driver.fromJson(json)).toList();
 }

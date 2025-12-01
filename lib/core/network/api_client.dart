@@ -23,6 +23,7 @@ class ApiClient {
   late final Dio _dio;
   late final CustomCacheInterceptor _cacheInterceptor;
   late final ConnectivityService _connectivityService;
+  bool _initialized = false;
 
   bool _isRefreshing = false;
   final List<Completer<void>> _pendingRequests = [];
@@ -41,6 +42,7 @@ class ApiClient {
   ApiClient._internal();
 
   Future<void> _initialize() async {
+    if (_initialized) return;
     // Initialize connectivity service with error handling
     try {
       _connectivityService = ConnectivityService.instance;
@@ -63,6 +65,8 @@ class ApiClient {
         validateStatus: (status) => status != null && status < 400,
       ),
     );
+
+    _initialized = true;
 
     // Initialize cache interceptor
     // _cacheInterceptor = CustomCacheInterceptor(

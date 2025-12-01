@@ -30,17 +30,6 @@ class StatusCard extends StatelessWidget {
                         ),
                       ),
                       Spacer(),
-                      Transform.scale(
-                        scale:
-                            0.8,
-                        child: Switch(
-                          splashRadius: 12,
-                          value: true,
-                          activeTrackColor: Colors.green,
-                          inactiveTrackColor: Colors.grey,
-                          onChanged: (val) {},
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 18),

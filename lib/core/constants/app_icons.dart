@@ -11,6 +11,7 @@ class AppIcons {
   static const String subscription = 'assets/icons/subscription.png';
   static const String s_mail = 'assets/icons/s_mail.png';
   static const String link = 'assets/icons/link.png';
+  static const String addstopies = 'assets/icons/addstopies.png';
 
 
 }

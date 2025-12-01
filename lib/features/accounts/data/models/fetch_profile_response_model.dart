@@ -14,6 +14,7 @@ class FetchProfileResponseModel {
   final String updatedAt;
   final Avatar avatar;
   final VerificationInfo verificationInfo;
+  final Dashboard? dashboard;
 
   FetchProfileResponseModel({
     required this.id,
@@ -31,10 +32,16 @@ class FetchProfileResponseModel {
     required this.updatedAt,
     required this.avatar,
     required this.verificationInfo,
+    this.dashboard,
   });
 
   factory FetchProfileResponseModel.fromJson(Map<String, dynamic> json) {
     final data = json.containsKey('data') ? json['data'] : json;
+    final role = data['role'] ?? '';
+
+    // Debug logging
+    print('📊 Profile response for role: $role');
+    print('📦 Profile data keys: ${data.keys.toList()}');
 
     // Handle avatar being either a String or Map
     Avatar parseAvatar(dynamic avatar) {
@@ -47,22 +54,59 @@ class FetchProfileResponseModel {
       }
     }
 
+    // Extract data based on role
+    // For driver/dispatcher, user data might be nested
+    String extractString(String key, String fallback) {
+      // Try direct access first
+      if (data.containsKey(key)) return data[key]?.toString() ?? fallback;
+      
+      // For driver/dispatcher, try nested under 'user' key
+      if (data.containsKey('user') && data['user'] is Map) {
+        final user = data['user'] as Map<String, dynamic>;
+        if (user.containsKey(key)) return user[key]?.toString() ?? fallback;
+      }
+      
+      return fallback;
+    }
+
+    dynamic extractAvatar() {
+      // Try direct access first
+      if (data.containsKey('avatar')) return data['avatar'];
+      
+      // For driver/dispatcher, try nested under 'user' key
+      if (data.containsKey('user') && data['user'] is Map) {
+        final user = data['user'] as Map<String, dynamic>;
+        if (user.containsKey('avatar')) return user['avatar'];
+      }
+      
+      return null;
+    }
+
     return FetchProfileResponseModel(
-      id: data['_id'] ?? '',
-      name: data['name'] ?? '',
-      email: data['email'] ?? '',
-      role: data['role'] ?? '',
-      address: data['address'] ?? '',
-      dob: data['dob'] ?? '',
-      nationality: data['nationality'] ?? '',
-      phone: data['phone'] ?? '',
-      stripeAccountId: data['stripeAccountId'] ?? '',
-      isStripeOnboarded: data['isStripeOnboarded'] ?? false,
-      passwordResetToken: data['password_reset_token'] ?? '',
-      createdAt: data['createdAt'] ?? '',
-      updatedAt: data['updatedAt'] ?? '',
-      avatar: parseAvatar(data['avatar']),
-      verificationInfo: VerificationInfo.fromJson(data['verificationInfo'] ?? {}),
+      id: extractString('_id', ''),
+      name: extractString('name', ''),
+      email: extractString('email', ''),
+      role: role,
+      address: extractString('address', ''),
+      dob: extractString('dob', ''),
+      nationality: extractString('nationality', ''),
+      phone: extractString('phone', ''),
+      stripeAccountId: extractString('stripeAccountId', ''),
+      isStripeOnboarded: (data['isStripeOnboarded'] ?? false) as bool,
+      passwordResetToken: extractString('password_reset_token', ''),
+      createdAt: extractString('createdAt', ''),
+      updatedAt: extractString('updatedAt', ''),
+      avatar: parseAvatar(extractAvatar()),
+      verificationInfo: VerificationInfo.fromJson(
+        data.containsKey('verificationInfo')
+            ? data['verificationInfo']
+            : data.containsKey('user') && data['user'] is Map
+                ? (data['user'] as Map<String, dynamic>)['verificationInfo'] ?? {}
+                : {},
+      ),
+      dashboard: data.containsKey('dashboard') && data['dashboard'] is Map
+          ? Dashboard.fromJson(data['dashboard'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -85,6 +129,7 @@ class FetchProfileResponseModel {
       'nationality': nationality,
       'phone': phone,
       "verificationInfo": verificationInfo.toJson(),
+      if (dashboard != null) "dashboard": dashboard!.toJson(),
     };
   }
 }
@@ -133,6 +178,34 @@ class VerificationInfo {
     return {
       "verified": verified,
       "token": token,
+    };
+  }
+}
+
+class Dashboard {
+  final int pendingRequests;
+  final int readyToLoad;
+  final int availableDrivers;
+
+  Dashboard({
+    required this.pendingRequests,
+    required this.readyToLoad,
+    required this.availableDrivers,
+  });
+
+  factory Dashboard.fromJson(Map<String, dynamic> json) {
+    return Dashboard(
+      pendingRequests: json['pendingRequests'] ?? 0,
+      readyToLoad: json['readyToLoad'] ?? 0,
+      availableDrivers: json['availableDrivers'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "pendingRequests": pendingRequests,
+      "readyToLoad": readyToLoad,
+      "availableDrivers": availableDrivers,
     };
   }
 }

@@ -14,7 +14,6 @@ import 'package:flutter_lakshman1020/features/notification/presentation/screens/
 import 'package:flutter_lakshman1020/features/others/presentation/screen/shipment_screen.dart';
 import 'package:get/get.dart';
 
-import '../bindings/load_binding.dart';
 import '../controllers/load_controller.dart';
 
 class UserHomeScreen extends StatefulWidget {
@@ -32,11 +31,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> with WidgetsBindingObse
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     
-    // Initialize bindings if not already initialized
-    if (!Get.isRegistered<LoadController>()) {
-      LoadBinding().dependencies();
-    }
-    
+    // LoadController is now registered globally in service locator
     // Fetch loads only if not already loaded (first time or empty)
     final LoadController loadController = Get.find<LoadController>();
     if (loadController.loads.isEmpty) {
